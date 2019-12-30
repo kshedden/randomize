@@ -551,7 +551,7 @@ func CreateProjectStep9(w http.ResponseWriter, r *http.Request) {
 
 	pkey := useremail + "::" + projectName
 	if _, err := client.Doc("Project/"+pkey).Set(ctx, proj); err != nil {
-		msg := "A database error occured, the project was not created."
+		msg := "A database error occurred, the project was not created."
 		log.Printf("Create_project_step9: %v", err)
 		rmsg := "Return to dashboard"
 		messagePage(w, r, msg, rmsg, "/dashboard")

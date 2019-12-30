@@ -32,19 +32,19 @@ func ViewComments(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tvals := struct {
-		User         string
-		LoggedIn     bool
-		PR           *Project
-		PV           *ProjectView
-		Pkey         string
-		Any_comments bool
+		User        string
+		LoggedIn    bool
+		PR          *Project
+		PV          *ProjectView
+		Pkey        string
+		AnyComments bool
 	}{
-		User:         useremail,
-		LoggedIn:     useremail != "",
-		PR:           PR,
-		PV:           PV,
-		Any_comments: len(PR.Comments) > 0,
-		Pkey:         pkey,
+		User:        useremail,
+		LoggedIn:    useremail != "",
+		PR:          PR,
+		PV:          PV,
+		AnyComments: len(PR.Comments) > 0,
+		Pkey:        pkey,
 	}
 
 	if err := tmpl.ExecuteTemplate(w, "view_comments.html", tvals); err != nil {

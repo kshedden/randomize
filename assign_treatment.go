@@ -35,7 +35,7 @@ func AssignTreatmentInput(w http.ResponseWriter, r *http.Request) {
 	proj, err := getProjectFromKey(ctx, pkey)
 	if err != nil {
 		log.Printf("Assign_treatment_input: %v", err)
-		msg := "A database error occured, the project could not be loaded."
+		msg := "A database error occurred, the project could not be loaded."
 		rmsg := "Return to dashboard"
 		messagePage(w, r, msg, rmsg, "/dashboard")
 		return
@@ -138,7 +138,7 @@ func AssignTreatmentConfirm(w http.ResponseWriter, r *http.Request) {
 	project, err := getProjectFromKey(ctx, pkey)
 	if err != nil {
 		log.Printf("Assign_treatment_confirm: %v", err)
-		msg := "A database error occured, the project could not be loaded."
+		msg := "A database error occurred, the project could not be loaded."
 		rmsg := "Return to dashboard"
 		messagePage(w, r, msg, rmsg, "/dashboard")
 		return
@@ -222,7 +222,7 @@ func AssignTreatment(w http.ResponseWriter, r *http.Request) {
 	proj, err := getProjectFromKey(ctx, pkey)
 	if err != nil {
 		log.Printf("Assign_treatment %v", err)
-		msg := "A database error occured, the project could not be loaded."
+		msg := "A database error occurred, the project could not be loaded."
 		rmsg := "Return to dashboard"
 		messagePage(w, r, msg, rmsg, "/dashboard")
 		return
@@ -260,7 +260,7 @@ func AssignTreatment(w http.ResponseWriter, r *http.Request) {
 	// Update the project in the database.
 	if _, err := client.Doc("Project/"+pkey).Set(ctx, proj); err != nil {
 		log.Printf("Assign_treatment: %v", err)
-		msg := "A database error occured, the project could not be updated."
+		msg := "A database error occurred, the project could not be updated."
 		rmsg := "Return to dashboard"
 		messagePage(w, r, msg, rmsg, "/dashboard")
 		return

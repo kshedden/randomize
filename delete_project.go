@@ -21,7 +21,7 @@ func DeleteProjectStep1(w http.ResponseWriter, r *http.Request) {
 
 	projlist, err := getProjects(ctx, useremail, false)
 	if err != nil {
-		msg := "A database error occured, your projects cannot be retrieved."
+		msg := "A database error occurred, your projects cannot be retrieved."
 		log.Printf("Delete_project_step1: %v", err)
 		rmsg := "Return to dashboard"
 		messagePage(w, r, msg, rmsg, "/dashboard")
@@ -148,7 +148,7 @@ func DeleteProjectStep3(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Delete the project from each user's SharingByUser record.
-	for user, _ := range sbp {
+	for user := range sbp {
 
 		user = strings.ToLower(user)
 

@@ -26,7 +26,7 @@ func Dashboard(w http.ResponseWriter, r *http.Request) {
 	if status.Code(err) == codes.NotFound {
 		// OK
 	} else if err != nil {
-		msg := "A database error occured, projects cannot be retrieved."
+		msg := "A database error occurred, projects cannot be retrieved."
 		log.Printf("Dashboard: %v", err)
 		rmsg := "Return to dashboard"
 		messagePage(w, r, msg, rmsg, "/dashboard")
