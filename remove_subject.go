@@ -205,9 +205,9 @@ func RemoveSubjectCompleted(w http.ResponseWriter, r *http.Request) {
 	proj.RemovedSubjects = append(proj.RemovedSubjects, subjectId)
 
 	comment := &Comment{
-		Person:   useremail,
-		DateTime: time.Now(),
-		Comment:  []string{fmt.Sprintf("Subject '%s' removed from the project.", subjectId)},
+		Commenter: useremail,
+		DateTime:  time.Now(),
+		Comment:   []string{fmt.Sprintf("Subject '%s' removed from the project.", subjectId)},
 	}
 	proj.Comments = append(proj.Comments, comment)
 

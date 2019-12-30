@@ -31,8 +31,8 @@ func SetTemplates(t *template.Template) {
 	tmpl = t
 }
 
-// userEmail returns the email of the current user.  This should be made
-// more robust by checking the certificate, see:
+// userEmail returns the email of the current user.
+// TODO This should be made more robust by checking the certificate, see:
 //   https://cloud.google.com/go/getting-started/authenticate-users-with-iap
 func userEmail(r *http.Request) string {
 
@@ -43,8 +43,8 @@ func userEmail(r *http.Request) string {
 	}
 
 	e := r.Header.Get("X-Goog-Authenticated-User-Email")
-
 	e = strings.Replace(e, "accounts.google.com:", "", 1)
+
 	return e
 }
 
@@ -125,7 +125,7 @@ type Project struct {
 	// who have been removed from the study
 	RemovedSubjects []string
 
-	// If true, the project is currently open for enrollment
+	// Open is true if the project is currently open for enrollment
 	Open bool
 
 	// SamplingRates contains the sampling rates for each treatment group.
@@ -142,6 +142,8 @@ func (proj *Project) NumAssignments() int {
 	return t
 }
 
+// GetData returns the number of enrolled subjects with the given
+// level of the given variable that are assigned to the given group.
 func (proj *Project) GetData(variable, level, group int) float64 {
 
 	p := len(proj.Variables)
@@ -152,6 +154,8 @@ func (proj *Project) GetData(variable, level, group int) float64 {
 	return proj.data[ii]
 }
 
+// SetData sets the number of enrolled subjects with the given level
+// of the given variable that are assigned to the given group.
 func (proj *Project) SetData(variable, level, group int, x float64) {
 
 	p := len(proj.Variables)
@@ -203,11 +207,21 @@ type VariableView struct {
 
 // Comment stores a single comment.
 type Comment struct {
-	Person   string
+
+	// Commenter identifies the person who made the comment
+	Commenter string
+
+	// DateTime records when the comment was made
 	DateTime time.Time
-	Date     string
-	Time     string
-	Comment  []string
+
+	// Date is the printable form of the date when the comment was made
+	Date string
+
+	// Time is the printable form of the time when the comment was made
+	Time string
+
+	// Comment containst the comment, broken into lines of text
+	Comment []string
 }
 
 // cleanSplit splits a string into tokens delimited by a given
@@ -233,6 +247,7 @@ func cleanSplit(s string, sep string) []string {
 // getProjectfromKey
 func getProjectFromKey(ctx context.Context, pkey string) (*Project, error) {
 
+	ctx = context.Background()
 	client, err := firestore.NewClient(ctx, projectID)
 	if err != nil {
 		return nil, err
@@ -255,6 +270,7 @@ func getProjectFromKey(ctx context.Context, pkey string) (*Project, error) {
 // storeProject
 func storeProject(ctx context.Context, proj *Project, pkey string) error {
 
+	ctx = context.Background()
 	client, err := firestore.NewClient(ctx, projectID)
 	if err != nil {
 		return err
@@ -268,42 +284,44 @@ func storeProject(ctx context.Context, proj *Project, pkey string) error {
 
 // formatProject returns a ProjectView object corresponding to the
 // given Project and Key object.
-func formatProject(project *Project) *ProjectView {
+func formatProject(proj *Project) *ProjectView {
 
-	fp := new(ProjectView)
-	fp.Owner = project.Owner
-	fp.data = project.data
-	fp.Name = project.Name
-	fp.Comments = project.Comments
-	fp.Assignments = project.Assignments
-	fp.Bias = fmt.Sprintf("%d", project.Bias)
-	t := project.Created
+	t := proj.Created
 	loc, _ := time.LoadLocation("America/New_York")
 	t = t.In(loc)
-	fp.CreatedDate = t.Format("2006-1-2")
-	fp.CreatedTime = t.Format("3:04pm")
-	fp.GroupNames = strings.Join(project.GroupNames, ",")
-	fp.Variables = make([]VariableView, len(project.Variables))
 
-	rateStr := make([]string, len(project.SamplingRates))
-	for i, x := range project.SamplingRates {
+	fp := ProjectView{
+		Owner:           proj.Owner,
+		data:            proj.data,
+		Name:            proj.Name,
+		Comments:        proj.Comments,
+		Assignments:     proj.Assignments,
+		Bias:            fmt.Sprintf("%d", proj.Bias),
+		CreatedDate:     t.Format("2006-1-2"),
+		CreatedTime:     t.Format("3:04pm"),
+		GroupNames:      strings.Join(proj.GroupNames, ","),
+		Variables:       make([]VariableView, len(proj.Variables)),
+		RemovedSubjects: proj.RemovedSubjects,
+		Open:            proj.Open,
+	}
+
+	rateStr := make([]string, len(proj.SamplingRates))
+	for i, x := range proj.SamplingRates {
 		rateStr[i] = fmt.Sprintf("%.0f", x)
 	}
 	fp.SamplingRates = strings.Join(rateStr, ",")
 
-	for i, pv := range project.Variables {
+	for i, pv := range proj.Variables {
 		fp.Variables[i] = formatVariable(pv)
 	}
-	fp.RemovedSubjects = project.RemovedSubjects
-	fp.Open = project.Open
 
-	t = project.Modified
+	t = proj.Modified
 	loc, _ = time.LoadLocation("America/New_York")
 	t = t.In(loc)
 	fp.ModifiedDate = t.Format("2006-1-2")
 	fp.ModifiedTime = t.Format("3:04pm")
 
-	return fp
+	return &fp
 }
 
 // formatProjects...
@@ -331,12 +349,11 @@ func boolYesNo(b bool) string {
 // given Variable object.
 func formatVariable(va Variable) VariableView {
 
-	var vv VariableView
-	vv.Name = va.Name
-	vv.Levels = strings.Join(va.Levels, ",")
-	vv.Weight = fmt.Sprintf("%.0f", va.Weight)
-
-	return vv
+	return VariableView{
+		Name:   va.Name,
+		Levels: strings.Join(va.Levels, ","),
+		Weight: fmt.Sprintf("%.0f", va.Weight),
+	}
 }
 
 // getSharedUsers returns the user id's for for users who are

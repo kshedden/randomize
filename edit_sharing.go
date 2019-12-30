@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// EditSharing
+// EditSharing is page 1 for changing the sharing settings
 func EditSharing(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "GET" {
@@ -34,7 +34,7 @@ func EditSharing(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var sul []string
-	for k, _ := range sharedUsers {
+	for k := range sharedUsers {
 		sul = append(sul, k)
 	}
 
@@ -59,7 +59,7 @@ func EditSharing(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// EditSharingConfirm
+// EditSharingConfirm is page 2 for editing the sharing settings
 func EditSharingConfirm(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "POST" {

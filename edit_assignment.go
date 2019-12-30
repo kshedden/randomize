@@ -216,7 +216,7 @@ func EditAssignmentCompleted(w http.ResponseWriter, r *http.Request) {
 			addToAggregate(rec, proj)
 
 			comment := new(Comment)
-			comment.Person = useremail
+			comment.Commenter = useremail
 			comment.DateTime = time.Now()
 			comment.Comment = []string{
 				fmt.Sprintf("Group assignment for subject '%s' changed from '%s' to '%s'",

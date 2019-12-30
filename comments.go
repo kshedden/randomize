@@ -129,11 +129,11 @@ func ConfirmAddComment(w http.ResponseWriter, r *http.Request) {
 	loc, _ := time.LoadLocation("America/New_York")
 	t := time.Now().In(loc)
 	comment := &Comment{
-		Person:   useremail,
-		DateTime: time.Now(),
-		Date:     t.Format("2006-1-2"),
-		Time:     t.Format("3:04pm"),
-		Comment:  commentLines,
+		Commenter: useremail,
+		DateTime:  time.Now(),
+		Date:      t.Format("2006-1-2"),
+		Time:      t.Format("3:04pm"),
+		Comment:   commentLines,
 	}
 	proj.Comments = append(proj.Comments, comment)
 
